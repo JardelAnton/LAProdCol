@@ -151,14 +151,22 @@
                     document.getElementById("insert").style.display="block";
                     document.getElementById("update").style.display="none";
                     document.getElementById("delete").style.display="none";
+                    document.getElementById("payreg").style.display="none";
                 }else if(op == 2){
                     document.getElementById("insert").style.display="none";
                     document.getElementById("update").style.display="block";
                     document.getElementById("delete").style.display="none";
+                    document.getElementById("payreg").style.display="none";
                 }else if(op == 3){
                     document.getElementById("insert").style.display="none";
                     document.getElementById("update").style.display="none";
                     document.getElementById("delete").style.display="block";
+                    document.getElementById("payreg").style.display="none";
+                }else if(op == 4){
+                    document.getElementById("insert").style.display="none";
+                    document.getElementById("update").style.display="none";
+                    document.getElementById("delete").style.display="none";
+                    document.getElementById("payreg").style.display="block";
                 }
             }
         </script>
@@ -202,7 +210,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="index.html">L.A Produtos Coloniais</a>
+                    <a class="navbar-brand" href="index.php">L.A Produtos Coloniais</a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 

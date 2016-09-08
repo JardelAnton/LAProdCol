@@ -46,11 +46,14 @@
     		document.getElementById("Clientes").style.display="none";
     	}
 
-
+        var register;//janela popup que abrirá ao selecionar operação
     	//clientes
    		function fechar_cliente(){	
     		register = window.close();
     	}
+        function insert_pay_cli(){
+            var register = window.open('cliente.php?op=pay','Cadastrar','left=300,top=40,height=600,width=800');
+        }        
     	function insert_cli(){
     		var register = window.open('cliente.php?op=insert','Cadastrar','left=300,top=40,height=600,width=800');
     		//document.getElementById('popup_cadastro').style.display='block';
