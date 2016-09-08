@@ -10,7 +10,10 @@
             $op = 2;
         }else if($_GET['op'] == "delete"){
             $op = 3;
+        }else if($_GET['op'] == "pay"){
+            $op = 4;
         }
+
     }
 
     //Registrando o cadastro de um novo cliente
@@ -41,7 +44,7 @@
                                     $phone = $_POST['phone'];
                                     $contact = $_POST['contact_name'];
                                     $sql = "INSERT INTO cliente(cnpj,name,address,email,phones,contact_name) VALUES ('$cnpj','$name','$address','$email','$phone','$contact ')";
-                                    if(mysql_query($sql)){
+                                    if(mysqli_query($conexao,$sql)){
                                         echo' <script>alert("Cadastrado");</script>';
                                         unset($_POST['cnpj']); 
                                         unset($_POST['contact_name']); 
@@ -49,8 +52,10 @@
                                         unset($_POST['address']);
                                         unset($_POST['email']);
                                         unset($_POST['name']);
-                                    }else
+                                    }else{
+                                        echo mysqli_error($conexao);
                                         echo'alert("Ocorreu um erro no cadastro :( ");';   
+                                    }
                                 }
                             }
                         }
@@ -82,14 +87,15 @@
                                     unset($_POST['contact_name']);
                                 }else{
                                     $cnpj = $_POST['cnpj'];
+                                    $codc = $_POST['codc'];
                                     $name = $_POST['name'];
                                     $address = $_POST['address'];
                                     $email = $_POST['email'];
                                     $phone = $_POST['phone'];
                                     $contact = $_POST['contact_name'];
-                                    $sql = "INSERT INTO cliente(cnpj,name,address,email,phones,contact_name) VALUES ('$cnpj','$name','$address','$email','$phone','$contact ')";
-                                    if(mysql_query($sql)){
-                                        echo' <script>alert("Cadastrado");</script>';
+                                    $sql="UPDATE cliente SET cnpj='$cnpj',name='$name', address='$address', email='$email', phones='$phone', contact_name='$contact' WHERE codc='$codc'";
+                                    if(mysqli_query($conexao,$sql)){
+                                        echo' <script>alert("Atualizado");</script>';
                                         unset($_POST['cnpj']); 
                                         unset($_POST['contact_name']); 
                                         unset($_POST['phone']);
@@ -110,13 +116,18 @@
 
 
     //Atualizando o cadastro de um cliente
-    if(isset($_POST['delete'])){        
-        echo "deleta";
+    if(isset($_POST['delete']) && isset($_POST['empresa'])){        
+        $names = $_POST['empresa'];
+        $sql = "DELETE FROM cliente WHERE name='$names'";
+        $res = mysqli_query($conexao,$sql);
+        if($res){
+            echo"Excluido";
+        }
+
     }
     
 ?>
 <html lang="en">
-
     <head>
 
         <meta charset="utf-8">
@@ -169,33 +180,42 @@
                     document.getElementById("payreg").style.display="block";
                 }
             }
-        </script>
-        <?  
-            if(isset($_POST['deletar'])){
-                $r = rand(10000,2);
-                echo '
-                    <script type="text/javascript">
-                        var r = prompt("Confirme a exclusao digitando o numero: '.$r.'");
-                        if('.$r.'==r){';
-                                $a='ola';
-                                echo'Saindo do monstro a jaula';
-                                $a=$_POST['cliente'];
-                                echo $a;
-                                $sql = "DELETE FROM cliente WHERE codc = $a";
-                                mysql_query($sql);
-                                echo'alert("Cliente excluido.");}
-                        else{';
-                            $a=0;
-                            echo'alert("Os numeros nao conferem.");
-                        }
-                    </script>
-                ';
-                if($a=='ola'){
-                    
-                }else
-                    echo"que diabo";
+
+            function formatar(mascara, documento){
+              var i = documento.value.length;
+              var saida = mascara.substring(0,1);
+              var texto = mascara.substring(i)
+              
+              if (texto.substring(0,1) != saida){
+                        documento.value += texto.substring(0,1);
+              }
             }
-        ?>
+            function teste1(){
+                document.getElementById("jur").name="nada";
+                document.getElementById("fis").name="cnpj";
+                document.getElementById("jur").style.display="none";
+                document.getElementById("fis").style.display="block";
+            }
+            function teste2(){
+                document.getElementById("fis").name="nada";
+                document.getElementById("jur").name="cnpj";
+                document.getElementById("fis").style.display="none";
+                document.getElementById("jur").style.display="block";
+            }
+            function teste3(){
+                document.getElementById("jur1").name="nada";
+                document.getElementById("fis1").name="cnpj";
+                document.getElementById("jur1").style.display="none";
+                document.getElementById("fis1").style.display="block";
+            }
+            function teste4(){
+                document.getElementById("fis1").name="nada";
+                document.getElementById("jur1").name="cnpj";
+                document.getElementById("fis1").style.display="none";
+                document.getElementById("jur1").style.display="block";
+            }
+        </script>
+
 
     </head>
     <body onload="load()">
@@ -230,25 +250,18 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <form method="post" action="" id="register">
-                                <input id="fis" type="text" name="cnpj" placeholder=<? if(isset($_POST['cnpj'])) echo '"'.$_POST['cnpj'].'"'; else echo'"CPF / CNPJ"'; ?>/></br/>
+                                <input type="radio" name="tppessoa" onchange="teste1()"> CPF
+                                <input type="radio" name="tppessoa" onchange="teste2()" checked> CNPJ
+                                <br/>
+                                <input id="fis" type="text" style="display:none;" name="cnpj" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" placeholder=<? if(isset($_POST['cnpj'])) echo '"'.$_POST['cnpj'].'"'; else echo'"CPF"'; ?>/>
+                                <input id="jur" type="text" name="cnpj" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)" placeholder=<? if(isset($_POST['cnpj'])) echo '"'.$_POST['cnpj'].'"'; else echo'"CNPJ"'; ?>/></br/>
                                 <input type="text" name="name" placeholder=<? if(isset($_POST['name'])) echo '"'.$_POST['name'].'"'; else echo'"Nome"'; ?>/></br/>                          
                                 <input type="text" name="address" placeholder=<? if(isset($_POST['address'])) echo '"'.$_POST['address'].'"'; else echo'"Endereço"'; ?>/></br/>
                                 <input type="text" name="email" placeholder=<? if(isset($_POST['email'])) echo '"'.$_POST['email'].'"'; else echo'"E-mail"'; ?>/></br/>
-                                <input type="text" name="phone" placeholder=<? if(isset($_POST['phone'])) echo '"'.$_POST['phone'].'"'; else echo'"Telefone"'; ?>/></br/>
+                                <input type="text" name="phone" maxlength="13" OnKeyPress="formatar('## ####-#####', this)"placeholder=<? if(isset($_POST['phone'])) echo '"'.$_POST['phone'].'"'; else echo'"Telefone"'; ?>/></br/>
                                 <input type="text" name="contact_name" placeholder=<? if(isset($_POST['contact_name'])) echo '"'.$_POST['contact_name'].'"'; else echo'"Nome de contato"'; ?>/></br/>
                                 <input type="submit" name="register" value="Cadastrar" />
                             </form>
-                            <script type="text/javascript">
-                                function teste1(){
-                                    document.getElementById("jur").style.display="none";
-                                    document.getElementById("fis").style.display="block";
-                                }
-                                function teste2(){
-                                    document.getElementById("fis").style.display="none";
-                                    document.getElementById("jur").style.display="block";
-                                }
-
-                            </script>
                         </div>
                     </div>
                 </div>
@@ -265,29 +278,49 @@
                 <div class="col-md-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <form method="post" action="" id="register">
-                                Pessoa: <input type="radio" name="tp_person" value="Fisica" <? if(isset($_POST['cpf'])) echo 'cheked'; ?> onClick="teste1();" >Física
-                                <input type="radio" name="tp_person" value="Juridica" onClick="teste2();" <? if(isset($_POST['cnpj'])) echo 'cheked'; ?>>Jurídica</br/>
-                                <input id="jur" type="text" name="cnpj" placeholder=<? if(isset($_POST['cnpj'])) echo '"'.$_POST['cnpj'].'"'; else echo'"CNPJ"'; ?>/></br/>
-                                <input id="fis" type="text" name="cnpj" placeholder=<? if(isset($_POST['cpf'])) echo '"'.$_POST['cpf'].'"'; else echo'"CPF"'; ?>/></br/>
-                                <input type="text" name="name" placeholder=<? if(isset($_POST['name'])) echo '"'.$_POST['name'].'"'; else echo'"Nome"'; ?>/></br/>                          
-                                <input type="text" name="address" placeholder=<? if(isset($_POST['address'])) echo '"'.$_POST['address'].'"'; else echo'"Endereço"'; ?>/></br/>
-                                <input type="text" name="email" placeholder=<? if(isset($_POST['email'])) echo '"'.$_POST['email'].'"'; else echo'"E-mail"'; ?>/></br/>
-                                <input type="text" name="phone" placeholder=<? if(isset($_POST['phone'])) echo '"'.$_POST['phone'].'"'; else echo'"Telefone"'; ?>/></br/>
-                                <input type="text" name="contact_name" placeholder=<? if(isset($_POST['contact_name'])) echo '"'.$_POST['contact_name'].'"'; else echo'"Nome de contato"'; ?>/></br/>
-                                <input type="submit" name="update" value="Atualizar" />
+                            <form method="post" action="" id="fregister">
+                              <select name="empresa">
+                                <option>Selecione:</option>
+                                <?
+                                    $sql = "SELECT name FROM cliente";
+                                    $res = mysqli_query($conexao,$sql);
+                                    while($tupla = mysqli_fetch_assoc($res)){
+                                        echo'<option value="'.$tupla['name'].'"">'.$tupla['name'].'</option>';
+                                    }
+                                ?>
+                            </select>
+                                <input type="submit" name="select" value="Selecionar" />
                             </form>
+                            <?
+                            if(isset($_POST['select']) && isset($_POST['empresa'])){
+                            echo'
                             <script type="text/javascript">
-                                function teste1(){
-                                    document.getElementById("jur").style.display="none";
-                                    document.getElementById("fis").style.display="block";
-                                }
-                                function teste2(){
-                                    document.getElementById("fis").style.display="none";
-                                    document.getElementById("jur").style.display="block";
-                                }
+                                document.getElementById("fregister").style.display="none";
+                            </script>';
+                                $names=$_POST['empresa'];
+                                $sql = "SELECT * FROM cliente WHERE name = '$names'";
+                                $res = mysqli_query($conexao,$sql);
+                                while($tupla = mysqli_fetch_assoc($res)){
+                                    echo'
+                                        <form action="" method="post">
+                                        <input name=codc value = "'.$tupla['codc'].'" size = 1 readonly/><br/> Cpf/cnpj:                                        
+                                        ';?>
+                                        <?if(strlen($tupla['cnpj'])==14){?>
+                                        <input id="fis1" type="text" name="cnpj" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';}else{?>
 
-                            </script>
+                                        <input id="jur1" type="text" name="cnpj" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';}
+                                        echo '</br/>
+                                            Nome:<input type="text" name="name" value="'.$tupla['name'].'"><br/>
+                                            Endereço:<input type="text" name="address" value="'.$tupla['address'].'"><br/>
+                                            Email:<input type="text" name="email" value="'.$tupla['email'].'"><br/>
+                                            Telefone:<input type="text" name="phone" value="'.$tupla['phones'].'"><br/>
+                                    Contato:<input type="text" name="contact_name" value="'.$tupla['contact_name'].'"><br/><br/>
+                                            <input type="submit" name="update" value="Atualizar">
+                                        </form>
+                                    ';
+                                }
+                            }
+                            ?> 
                         </div>
                     </div>
                 </div>
@@ -304,23 +337,80 @@
                 <div class="col-md-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                        <form action="" method="POST">
-                            <select name="cliente" id="idcli">
+                       <form method="post" action="" id="delete">
+                              <select name="empresa">
                                 <option>Selecione:</option>
-                            <? 
-                                $sql = "SELECT * FROM cliente";
-                                $res = mysql_query($sql);
-                                while($tupla = mysql_fetch_array($res)){
-                                    echo "<option id='legal' value = ".$cli.$tupla['codc'].">";
-                                    echo $tupla['name'];
-                                    echo "</option>";
-                                }
-
-                            ?>
+                                <?
+                                    $sql = "SELECT name FROM cliente";
+                                    $res = mysqli_query($conexao,$sql);
+                                    while($tupla = mysqli_fetch_assoc($res)){
+                                        echo'<option value="'.$tupla['name'].'"">'.$tupla['name'].'</option>';
+                                    }
+                                ?>
                             </select>
-                            <input type="submit" name="deletar" value="Deletar"/>
+                            <input type="submit" name="delete" value="Deletar"/>
                         <form>
                             
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container" id="payreg">
+
+            <!-- Marketing Icons Section -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Registrar pagamento de clientes</h1>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                       <form method="post" action="" id="payment">
+                              <select name="empresa">
+                                <option>Selecione:</option>
+                                <?
+                                    $sql = "SELECT name FROM cliente";
+                                    $res = mysqli_query($conexao,$sql);
+                                    while($tupla = mysqli_fetch_assoc($res)){
+                                        echo'<option value="'.$tupla['name'].'"">'.$tupla['name'].'</option>';
+                                    }
+                                ?>
+                            </select>
+                            <input type="submit" name="selecinar" value="selecinar"/>
+                        <form>
+                        <?
+                            if(isset($_POST['selecinar']) && isset($_POST['empresa'])){
+                                echo'
+                                <script type="text/javascript">
+                                    document.getElementById("payment").style.display="none";
+                                </script>';
+                                $names=$_POST['empresa'];
+                                $sql = "SELECT * FROM compra WHERE name = '$names' AND status=0";
+                                $res = mysqli_query($conexao,$sql);
+                                while($tupla = mysqli_fetch_assoc($res)){
+                                    echo'
+                                        <form action="" method="post">
+                                        <input name=codc value = "'.$tupla['codc'].'" size = 1 readonly/><br/> Cpf/cnpj:                                        
+                                        ';?>
+                                        <?if(strlen($tupla['cnpj'])==14){?>
+                                        <input id="fis1" type="text" name="cnpj" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';}else{?>
+
+                                        <input id="jur1" type="text" name="cnpj" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';}
+                                        echo '</br/>
+                                            Nome:<input type="text" name="name" value="'.$tupla['name'].'"><br/>
+                                            Endereço:<input type="text" name="address" value="'.$tupla['address'].'"><br/>
+                                            Email:<input type="text" name="email" value="'.$tupla['email'].'"><br/>
+                                            Telefone:<input type="text" name="phone" value="'.$tupla['phones'].'"><br/>
+                                    Contato:<input type="text" name="contact_name" value="'.$tupla['contact_name'].'"><br/><br/>
+                                            <input type="submit" name="update" value="Atualizar">
+                                        </form>
+                                    ';
+                                }
+                            }
+                        ?> 
                         </div>
                     </div>
                 </div>

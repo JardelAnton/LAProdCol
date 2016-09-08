@@ -12,7 +12,7 @@ CREATE TABLE terreno(
 
 CREATE TABLE funcionario(
 	codf INTEGER NOT NULL AUTO_INCREMENT,
-	cpf BIGINT NOT NULL,
+	cpf varchar(20) NOT NULL,
 	nome VARCHAR(30) NOT NULL,
 	nro_cart BIGINT NOT NULL,
 	carga_hor VARCHAR(15) NOT NULL,
@@ -59,6 +59,7 @@ CREATE TABLE compra(
 	qtd_emb INTEGER NOT NULL,
 	valor_comp FLOAT,
 	data DATE,
+	status INTEGER NOT NULL,
 	CONSTRAINT PK_comp PRIMARY KEY (codc),
 	CONSTRAINT FK_cliente_COMPRA FOREIGN KEY (cnpj_dist) REFERENCES cliente(codc),
 	CONSTRAINT FK_LOTE_COMPRA FOREIGN KEY (nro_lote) REFERENCES lote(codl),
