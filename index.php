@@ -45,57 +45,6 @@
     		document.getElementById("Funcionarios").style.display="none";
     		document.getElementById("Clientes").style.display="none";
     	}
-
-        var register;//janela popup que abrirá ao selecionar operação
-    	//clientes
-   		function fechar_cliente(){	
-    		register = window.close();
-    	}
-        function insert_pay_cli(){
-            var register = window.open('cliente.php?op=pay','Cadastrar','left=300,top=40,height=600,width=800');
-        }        
-    	function insert_cli(){
-    		var register = window.open('cliente.php?op=insert','Cadastrar','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
-    	function update_cli(){
-    		var register = window.open('cliente.php?op=update','Atualizar','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
-    	function delete_cli(){
-    		var register = window.open('cliente.php?op=delete','Excluir','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
-
-
-    	//Funcion´arios
-    	function insert_func(){
-    		var register = window.open('funcionario.php?op=insert','Cadastrar','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
-    	function update_func(){
-    		var register = window.open('funcionario.php?op=update','Atualizar','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
-    	function delete_func(){
-    		var register = window.open('funcionario.php?op=delete','Excluir','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
-
-
-    	//estoque
-    	function insert_est(){
-    		var register = window.open('estoque.php?op=insert','Cadastrar','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
-    	function update_est(){
-    		var register = window.open('estoque.php?op=update','Atualizar','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
-    	function delete_est(){
-    		var register = window.open('estoque.php?op=delete','Excluir','left=300,top=40,height=600,width=800');
-    		//document.getElementById('popup_cadastro').style.display='block';
-    	}
     </script>    
 </head>
 
@@ -108,7 +57,7 @@
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar">opa</span>
+                    <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
@@ -134,7 +83,7 @@
             <div class="col-lg-12">
                 <h1 class="page-header">Clientes</h1>
             </div>  
-            <div class="col-md-3" onClick="insert_pay_cli();">
+            <div class="col-md-3"><a href="cliente.php?op=pay">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Registrar Pagamento</h4>
@@ -143,8 +92,9 @@
                         <p>Adicionar pagamento efetuado por cliente</p>
                     </div>
                 </div>
+                </a>
             </div>          
-            <div class="col-md-3" onClick="insert_cli();">
+            <div class="col-md-3"><a href="cliente.php?op=insert">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Cadastrar</h4>
@@ -153,8 +103,9 @@
                         <p><br/>Cadastrar novos clientes</p>
                     </div>
                 </div>
+                </a>
             </div>
-			<div class="col-md-3" onClick="update_cli();">
+			<div class="col-md-3"><a href="cliente.php?op=update">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Atualizar</h4>
@@ -163,8 +114,9 @@
                         <p><br/>Atualizar clientes ja existentes</p>
                     </div>
                 </div>
+                </a>
             </div>
-            <div class="col-md-3" onClick="delete_cli();">
+            <div class="col-md-3"><a href="cliente.php?op=delete">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Excluir</h4>
@@ -173,7 +125,7 @@
                         <p><br/>Excluir cliente</p>
                     </div>
                 </div>
-            </div>
+            </div></a>
         </div>
         <!-- /.row -->
     </div>
@@ -198,7 +150,7 @@
                     </div>
                 </div>
             </div>          
-            <div class="col-md-3" onClick="insert_func();">
+            <div class="col-md-3"><a href="funcionario.php?op=insert">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Cadastrar</h4>
@@ -207,8 +159,8 @@
                         <p>Cadastrar novos funcionarios</p>
                     </div>
                 </div>
-            </div>
-			<div class="col-md-3" onClick="update_func();">
+            </div></a>
+			<div class="col-md-3"><a href="funcionario.php?op=update">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Atualizar</h4>
@@ -217,8 +169,8 @@
                         <p>Atualizar funcionario ja existentes</p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3" onClick="delete_func();">
+            </div></a>
+            <div class="col-md-3"><a href="funcionario.php?op=delete">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Excluir</h4>
@@ -227,7 +179,7 @@
                         <p>Excluir funcionario</p>
                     </div>
                 </div>
-            </div>
+            </div></a>
         </div>
         <!-- /.row -->
     </div>
@@ -242,7 +194,7 @@
             <div class="col-lg-12">
                 <h1 class="page-header">Estoque</h1>
             </div>  
-            <div class="col-md-3" onClick="delete_cli();">
+            <div class="col-md-3"><a href="estoque.php?op=entrega">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Registrar Entrega</h4>
@@ -252,8 +204,8 @@
                         <button onClick="delete_cli();">Registrar</button>
                     </div>
                 </div>
-            </div>          
-            <div class="col-md-3">
+            </div></a>
+            <div class="col-md-3"><a href="estoque.php?op=deposito">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Registrar Deposito</h4>
@@ -263,7 +215,7 @@
                         <button onClick="insert_cli();">Registrar</button>
                     </div>
                 </div>
-            </div>
+            </div></a>
 			<div class="col-md-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">

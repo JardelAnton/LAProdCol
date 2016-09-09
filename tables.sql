@@ -1,7 +1,13 @@
 -- CREATE USER lairton;
 -- SET PASSWORD FOR 'lairton' = PASSWORD('210399');
 -- GRANT ALL PRIVILEGIES ON LAprodcol TO lairton;
+CREATE TABLE telefone(
+	numero varchar(20) NOT NULL,
+	identifica varchar(20) NOT NULL,
+	CONSTRAINT PK_PHONE PRIMARY KEY (numero,identifica)
+);
 
+/*
 CREATE TABLE terreno(
 	codt INTEGER NOT NULL AUTO_INCREMENT,
 	local VARCHAR(30) NOT NULL,
@@ -9,6 +15,7 @@ CREATE TABLE terreno(
 	area FLOAT NOT NULL,
 	CONSTRAINT PK_terr PRIMARY KEY (codt)
 );
+*/
 
 CREATE TABLE funcionario(
 	codf INTEGER NOT NULL AUTO_INCREMENT,
@@ -28,8 +35,6 @@ CREATE TABLE cliente(
 	name VARCHAR(30) NOT NULL,
 	address VARCHAR(50) NOT NULL,
 	email VARCHAR(30),
-	phones VARCHAR(15),
-	contact_name VARCHAR(30),
 	CONSTRAINT PK_dist PRIMARY KEY (codc)
 );
 
@@ -51,8 +56,7 @@ CREATE TABLE lote(
 );
 
 CREATE TABLE compra(
-	codc INTEGER NOT NULL AUTO_INCREMENT,
-	nota INTEGER NOT NULL,
+	nota INTEGER NOT NULL AUTO_INCREMENT,
 	cnpj_dist INTEGER NOT NULL,
 	nro_lote INTEGER NOT NULL,
 	emb INTEGER NOT NULL,
@@ -60,12 +64,13 @@ CREATE TABLE compra(
 	valor_comp FLOAT,
 	data DATE,
 	status INTEGER NOT NULL,
-	CONSTRAINT PK_comp PRIMARY KEY (codc),
+	CONSTRAINT PK_comp PRIMARY KEY (nota),
 	CONSTRAINT FK_cliente_COMPRA FOREIGN KEY (cnpj_dist) REFERENCES cliente(codc),
 	CONSTRAINT FK_LOTE_COMPRA FOREIGN KEY (nro_lote) REFERENCES lote(codl),
 	CONSTRAINT FK_EMBALAGEM_COMPRA FOREIGN KEY (emb) REFERENCES produto(codp)
 );
 
+/*
 CREATE TABLE embala(
 	code INTEGER NOT NULL AUTO_INCREMENT,
 	cpf INTEGER NOT NULL,
@@ -74,6 +79,7 @@ CREATE TABLE embala(
 	CONSTRAINT FK_emba_func FOREIGN KEY (cpf) REFERENCES funcionario(codf),
 	CONSTRAINT FK_emba_lote FOREIGN KEY (nro) REFERENCES lote(codl)
 );
+
 
 CREATE TABLE trabalha(
 	codtr INTEGER NOT NULL AUTO_INCREMENT,
@@ -97,5 +103,13 @@ CREATE TABLE colheita(
 	CONSTRAINT PK_colh PRIMARY KEY (codcl),
 	CONSTRAINT FK_colh_terr FOREIGN KEY (local) REFERENCES terreno(codt),
 	CONSTRAINT FK_colh_func FOREIGN KEY (cpf) REFERENCES funcionario(codf)
+);
+*/
+CREATE TABLE entrega(
+	nota INTEGER NOT NULL,
+	data DATE NOT NULL,
+	hora timestamp NOT NULL,
+	CONSTRAINT PK_ENTREGA PRIMARY KEY (nota),
+	CONSTRAINT FK_COMPRA_ENTREGA FOREIGN KEY (nota) REFERENCES compra(codc)
 );
 

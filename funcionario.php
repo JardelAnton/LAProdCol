@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <?
     require "connect.php";
+        
     $op;
     if(isset($_GET['op'])){
         if($_GET['op'] == "insert"){
@@ -9,10 +10,15 @@
             $op = 2;
         }else if($_GET['op'] == "delete"){
             $op = 3;
+        }else if($_GET['op'] == "pay"){
+            $op = 4;
         }
-    }
+
+    }   
+
+    // cadastrar funcionário
     if(isset($_POST['register'])){
-        if(isset($_POST['cpf']) || isset($_POST['cnpj'])){
+        if(isset($_POST['cpf'])){
             if(strlen($_POST['cpf'])<= 10 ){
                 unset($_POST['cpf']);
             }else if(isset($_POST['name'])){
@@ -53,6 +59,59 @@
             }
         }
     }
+
+    // atualizar funcionário
+    if(isset($_POST['update'])){
+        if(isset($_POST['cpf'])){
+            if(strlen($_POST['cpf'])<= 10 ){
+                unset($_POST['cpf']);
+            }else if(isset($_POST['name'])){
+                if(strlen($_POST['name']) == 0){
+                    unset($_POST['name']);
+                }else if(isset($_POST['nro_cart'])){
+                    if(strlen($_POST['nro_cart']) == 0 ){
+                        unset($_POST['nro_cart']);
+                    }else if(isset($_POST['sal'])){
+                        if(strlen($_POST['sal']) == 0 ){
+                            unset($_POST['sal']);
+                        }else if(isset($_POST['carga_hor'])){
+                            if(strlen($_POST['carga_hor']) == 0 ){
+                                unset($_POST['carga_hor']);
+                            }else{
+                                $codf=$_POST['codf'];
+                                $cpf = $_POST['cpf'];
+                                $nome = $_POST['name'];
+                                $nro_cart = $_POST['nro_cart'];
+                                $carga_hor = $_POST['carga_hor'];
+                                $sal = $_POST['sal'];
+                                $sql = "UPDATE funcionario SET cpf = '$cpf',nome='$nome' ,nro_cart= '$nro_cart',carga_hor='$carga_hor' ,sal='$sal' WHERE codf='$codf'";
+                                if(mysqli_query($conexao,$sql)){
+                                    echo' <script>alert("Cadastrado");</script>';
+                                    unset($_POST); 
+                                }else{
+                                    echo mysqli_error($conexao);
+                                    echo'alert("Ocorreu um erro no cadastro :( ");';   
+                                }
+                            }     
+                        }     
+                    }
+                }
+            }
+        }
+    }
+
+    //Excluindo um funcionário
+    if(isset($_POST['delete']) && isset($_POST['func'])){        
+        $names = $_POST['func'];
+        $sql = "DELETE FROM funcionario WHERE codf='$names'";
+        $res = mysqli_query($conexao,$sql);
+        if($res){
+            echo' <script>alert("Excluido");</script>';
+        }
+
+    }
+
+
 ?>
 <html lang="en">
 
@@ -172,39 +231,36 @@
                               <select name="func">
                                 <option>Selecione:</option>
                                 <?
-                                    $sql = "SELECT nome FROM funcionario";
+                                    $sql = "SELECT * FROM funcionario";
                                     $res = mysqli_query($conexao,$sql);
                                     while($tupla = mysqli_fetch_assoc($res)){
-                                        echo'<option value="'.$tupla['nome'].'"">'.$tupla['nome'].'</option>';
+                                        echo'<option value="'.$tupla['codf'].'"">'.$tupla['nome'].'</option>';
                                     }
                                 ?>
                             </select>
                                 <input type="submit" name="select" value="Selecionar" />
                             </form>
                             <?
-                            if(isset($_POST['select']) && isset($_POST['empresa'])){
+                            if(isset($_POST['select']) && isset($_POST['func'])){
                             echo'
                             <script type="text/javascript">
                                 document.getElementById("fregister").style.display="none";
                             </script>';
-                                $names=$_POST['empresa'];
-                                $sql = "SELECT * FROM cliente WHERE name = '$names'";
+                                $names=$_POST['func'];
+                                $sql = "SELECT * FROM funcionario WHERE codf = '$names'";
                                 $res = mysqli_query($conexao,$sql);
                                 while($tupla = mysqli_fetch_assoc($res)){
                                     echo'
                                         <form action="" method="post">
-                                        <input name=codc value = "'.$tupla['codc'].'" size = 1 readonly/><br/> Cpf/cnpj:                                        
+                                        <input name=codf value = "'.$tupla['codf'].'" size = 1 readonly/><br/> Cpf:                                        
                                         ';?>
-                                        <?if(strlen($tupla['cnpj'])==14){?>
-                                        <input id="fis1" type="text" name="cnpj" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';}else{?>
-
-                                        <input id="jur1" type="text" name="cnpj" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';}
-                                        echo '</br/>
-                                            Nome:<input type="text" name="name" value="'.$tupla['name'].'"><br/>
-                                            Endereço:<input type="text" name="address" value="'.$tupla['address'].'"><br/>
-                                            Email:<input type="text" name="email" value="'.$tupla['email'].'"><br/>
-                                            Telefone:<input type="text" name="phone" value="'.$tupla['phones'].'"><br/>
-                                    Contato:<input type="text" name="contact_name" value="'.$tupla['contact_name'].'"><br/><br/>
+                                        
+                                        <input id="fis1" type="text" name="cpf" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" value=<? echo'"'.$tupla['cpf'].'"/>
+                                        </br/>
+                                            Nome:<input type="text" name="name" value="'.$tupla['nome'].'"><br/>
+                                            Numero Carteira trab:<input type="text" name="nro_cart" value="'.$tupla['nro_cart'].'"><br/>
+                                            Carga Horária:<input type="text" name="carga_hor" value="'.$tupla['carga_hor'].'"><br/>
+                                            Salário:<input type="text" name="sal" value="'.$tupla['sal'].'"><br/><br/>
                                             <input type="submit" name="update" value="Atualizar">
                                         </form>
                                     ';
@@ -227,7 +283,19 @@
                 <div class="col-md-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                        <a href="" onClick="check()"> clica</a>                            
+                        <form method="post" action="" id="fregister">
+                              <select name="func">
+                                <option>Selecione:</option>
+                                <?
+                                    $sql = "SELECT * FROM funcionario";
+                                    $res = mysqli_query($conexao,$sql);
+                                    while($tupla = mysqli_fetch_assoc($res)){
+                                        echo'<option value="'.$tupla['codf'].'"">'.$tupla['nome'].'</option>';
+                                    }
+                                ?>
+                            </select>
+                                <input type="submit" name="delete" value="Deletar" />
+                            </form>                         
                         </div>
                     </div>
                 </div>
