@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?
+<?php
     require "connect.php";
         
     $op;
@@ -144,16 +144,16 @@
         </script>
         <script type="text/javascript">
             function load(){
-                var op = <?echo $op;?>;
-                if(op == 1){
+                var op = <?php echo '"'.$_GET['op'].'"';?>;
+                if(op == "insert"){
                     document.getElementById("insert").style.display="block";
                     document.getElementById("update").style.display="none";
                     document.getElementById("delete").style.display="none";
-                }else if(op == 2){
+                }else if(op == "update"){
                     document.getElementById("insert").style.display="none";
                     document.getElementById("update").style.display="block";
                     document.getElementById("delete").style.display="none";
-                }else if(op == 3){
+                }else if(op == "delete"){
                     document.getElementById("insert").style.display="none";
                     document.getElementById("update").style.display="none";
                     document.getElementById("delete").style.display="block";
@@ -230,17 +230,17 @@
                             <form method="post" action="" id="fregister">
                               <select name="func">
                                 <option>Selecione:</option>
-                                <?
+                                <?php 
                                     $sql = "SELECT * FROM funcionario";
                                     $res = mysqli_query($conexao,$sql);
-                                    while($tupla = mysqli_fetch_assoc($res)){
+                                    while($tupla = mysqli_fetch_array($res)){
                                         echo'<option value="'.$tupla['codf'].'"">'.$tupla['nome'].'</option>';
                                     }
                                 ?>
                             </select>
                                 <input type="submit" name="select" value="Selecionar" />
                             </form>
-                            <?
+                            <?php 
                             if(isset($_POST['select']) && isset($_POST['func'])){
                             echo'
                             <script type="text/javascript">
@@ -255,7 +255,7 @@
                                         <input name=codf value = "'.$tupla['codf'].'" size = 1 readonly/><br/> Cpf:                                        
                                         ';?>
                                         
-                                        <input id="fis1" type="text" name="cpf" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" value=<? echo'"'.$tupla['cpf'].'"/>
+                                        <input id="fis1" type="text" name="cpf" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" value=<?php  echo'"'.$tupla['cpf'].'"/>
                                         </br/>
                                             Nome:<input type="text" name="name" value="'.$tupla['nome'].'"><br/>
                                             Numero Carteira trab:<input type="text" name="nro_cart" value="'.$tupla['nro_cart'].'"><br/>
@@ -286,7 +286,7 @@
                         <form method="post" action="" id="fregister">
                               <select name="func">
                                 <option>Selecione:</option>
-                                <?
+                                <?php 
                                     $sql = "SELECT * FROM funcionario";
                                     $res = mysqli_query($conexao,$sql);
                                     while($tupla = mysqli_fetch_assoc($res)){

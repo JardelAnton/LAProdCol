@@ -34,16 +34,49 @@
     		document.getElementById("Clientes").style.display="block";
     		document.getElementById("Funcionarios").style.display="none";
     		document.getElementById("Estoque").style.display="none";
+    		document.getElementById("Venda").style.display="none";
+    		document.getElementById("Compra").style.display="none";
+    		document.getElementById("Gerencia").style.display="none";
     	}
     	function Funcionarios(){
     		document.getElementById("Funcionarios").style.display="block";
     		document.getElementById("Estoque").style.display="none";
     		document.getElementById("Clientes").style.display="none";
+    		document.getElementById("Venda").style.display="none";
+    		document.getElementById("Compra").style.display="none";
+    		document.getElementById("Gerencia").style.display="none";
     	}
     	function Estoque(){
     		document.getElementById("Estoque").style.display="block";
     		document.getElementById("Funcionarios").style.display="none";
     		document.getElementById("Clientes").style.display="none";
+    		document.getElementById("Venda").style.display="none";
+    		document.getElementById("Compra").style.display="none";
+    		document.getElementById("Gerencia").style.display="none";
+    	}
+    	function Venda(){
+    	    document.getElementById("Venda").style.display="block";
+    	    document.getElementById("Estoque").style.display="none";
+    		document.getElementById("Funcionarios").style.display="none";
+    		document.getElementById("Clientes").style.display="none";
+    		document.getElementById("Compra").style.display="none";
+    		document.getElementById("Gerencia").style.display="none";
+    	}
+    	function Compra(){
+    	    document.getElementById("Venda").style.display="none";
+    	    document.getElementById("Estoque").style.display="none";
+    		document.getElementById("Funcionarios").style.display="none";
+    		document.getElementById("Clientes").style.display="none";
+    		document.getElementById("Compra").style.display="block";
+    		document.getElementById("Gerencia").style.display="none";
+    	}
+    	function Gerencia(){
+    	    document.getElementById("Venda").style.display="none";
+    	    document.getElementById("Estoque").style.display="none";
+    		document.getElementById("Funcionarios").style.display="none";
+    		document.getElementById("Clientes").style.display="none";
+    		document.getElementById("Compra").style.display="none";
+    		document.getElementById("Gerencia").style.display="block";
     	}
     </script>    
 </head>
@@ -72,7 +105,9 @@
     <button class="navbar-brand" onClick="Clientes();">Clientes</button>
     <button class="navbar-brand" onClick="Funcionarios();">Funcionarios</button>
     <button class="navbar-brand" onClick="Estoque();">Estoque</button>
-    <button class="navbar-brand" onClick="Outro();">Outros</button>
+    <button class="navbar-brand" onClick="Venda();">Venda</button>
+    <button class="navbar-brand" onClick="Compra();">Compra</button>
+    <button class="navbar-brand" onClick="Gerencia();">Gerencia</button>
 
 
     <!-- Page Content -->
@@ -83,7 +118,7 @@
             <div class="col-lg-12">
                 <h1 class="page-header">Clientes</h1>
             </div>  
-            <div class="col-md-3"><a href="cliente.php?op=pay">
+            <div class="col-md-3"><a href="cliente.php?op=payreg">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Registrar Pagamento</h4>
@@ -140,7 +175,7 @@
             <div class="col-lg-12">
                 <h1 class="page-header">Funcionarios</h1>
             </div>  
-            <div class="col-md-3" >
+            <div class="col-md-3" ><a href="funcionario.php?op=payreg">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-compass"></i>Registrar Pagamento</h4>
@@ -149,7 +184,7 @@
                         <p>Adicionar pagamento efetuado por cliente</p>
                     </div>
                 </div>
-            </div>          
+            </div></a>      
             <div class="col-md-3"><a href="funcionario.php?op=insert">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -216,25 +251,47 @@
                     </div>
                 </div>
             </div></a>
-			<div class="col-md-3">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Atualizar</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Atualizar clientes ja existentes</p>
-                        <button onClick="update_cli();">Atualizar</button>
-                    </div>
-                </div>
-            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+
+ <!-- Page Content -->
+    <div class="container" id="Compra" style="display:none">
+
+        <!-- Marketing Icons Section -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Compra</h1>
+            </div>  
             <div class="col-md-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Excluir</h4>
+                        <h4><i class="fa fa-fw fa-compass"></i>Registrar Compra</h4>
                     </div>
                     <div class="panel-body">
-                        <p>Excluir cliente</p>
-                        <button onClick="delete_cli();">Excluir</button>
+                        <form action ="index.php?op=compra" method="POST">
+                            Vendedor:<br /><select name ="codcli">
+                                <option>Selecione</option>
+                            </select><br />
+                            Faturas:<input type="numeric" value="10" name="fatura" size="4"/>
+                            <br />
+                            Impostos:<input type="numeric" value="10" name="imposto" size="4"/>
+                            <br /><br />
+                             Transporte:<select name ="codtra">
+                                <option>Selecione</option>
+                            </select>
+                            <br />
+                            Produto:<select name ="codpro">
+                                <option>Selecione</option>
+                            </select>
+                            <br />
+                            Quantidade:<input type="numeric" value="10" name="numpro" size="4"/>
+                            <br /><br />
+                            Dados Adicionais:<input type="text" value="10" name="dadadc" />
+                           
+                            
+                        </form>
                     </div>
                 </div>
             </div>
@@ -243,6 +300,109 @@
     </div>
     <!-- /.container -->
 
+
+ <!-- Page Content -->
+    <div class="container" id="Venda" style="display:none">
+
+        <!-- Marketing Icons Section -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Registrar Venda</h1>
+            </div>  
+            <div class="col-md-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-compass"></i>Nova venda</h4>
+                    </div>
+                    <div class="panel-body">
+                        <form action ="index.php?op=venda" method="POST">
+                            Destinatário/remetente:<br /><select name ="codcli">
+                                <option>Selecione</option>
+                            </select><br />
+                            Faturas:<input type="numeric" value="10" name="fatura" size="4"/>
+                            <br />
+                            Impostos:<input type="numeric" value="10" name="imposto" size="4"/>
+                            <br /><br />
+                             Transporte:<select name ="codtra">
+                                <option>Selecione</option>
+                            </select>
+                            <br />
+                            Produto:<select name ="codpro">
+                                <option>Selecione</option>
+                            </select>
+                            <br />
+                            Quantidade:<input type="numeric" value="10" name="numpro" size="4"/>
+                            <br /><br />
+                            Dados Adicionais:<input type="text" value="10" name="dadadc" />
+                           
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+    
+    
+    
+  <!-- Page Content -->
+    <div class="container" id="Gerencia" style="display:none">
+
+        <!-- Marketing Icons Section -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Gerencia</h1>
+            </div>  
+            <div class="col-md-3"><a href="estoque.php?op=entrega">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-compass"></i>Entradas</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Relatório de cargas de entrada</p>
+                        <button onClick="delete_cli();">Registrar</button>
+                    </div>
+                </div>
+            </div></a>
+            <div class="col-md-3"><a href="estoque.php?op=deposito">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-compass"></i>Saídas</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Relatório de entregas</p>
+                        <button onClick="insert_cli();">Registrar</button>
+                    </div>
+                </div>
+            </div></a>
+            <div class="col-md-3"><a href="estoque.php?op=deposito">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-compass"></i>Falta entregar</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Notas de vendas, mas que produtos não foram retiradas</p>
+                        <button onClick="insert_cli();">Registrar</button>
+                    </div>
+                </div>
+            </div></a>
+            <div class="col-md-3"><a href="estoque.php?op=deposito">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-compass"></i>Faturamento não recebido</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Notas de vendas, mas que boletos/faturas não foram pagas</p>
+                        <button onClick="insert_cli();">Registrar</button>
+                    </div>
+                </div>
+            </div></a>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
 
     
     <!-- jQuery -->

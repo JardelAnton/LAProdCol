@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Eventos</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/modern-business.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.php">L.A Produtos Coloniais</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            
+        </div>
+        <!-- /.container -->
+    </nav>
+
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Marketing Icons Section -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Transportadora</h1>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-check"></i>Cadastrar</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>
+							<input type="text"placeholder="CNPJ"/></br/>
+							<input type="text"placeholder="Nome"/></br/>							
+							<input type="text"placeholder="Endereço"/></br/>
+							<input type="text"placeholder="Telefone"/></br/>
+							<input type="text"placeholder="Nome de contato"/>
+						</p>
+                        <a href="empr.html" class="btn btn-default">Cadastrar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-gift"></i> Atualizar</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>	
+						<li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Selecione <b class="caret"></b></a>                       
+						</li>
+							<input type="text"placeholder="CPF / CNPJ"/></br/>
+							<input type="text"placeholder="Nome"/></br/>							
+							<input type="text"placeholder="Endereço"/></br/>
+							<input type="text"placeholder="Telefone"/></br/>
+							<input type="text"placeholder="Nome de contato"/>
+						</p>
+                        <a href="Func.html" class="btn btn-default">Entrar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-compass"></i>Visualizar</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Visualizar Clientes</p>
+                        <a href="#" class="btn btn-default">Entrar</a>
+                    </div>
+                </div>
+            </div>
+			<div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-compass"></i>Excluir</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Excluir Clientes</p>
+                        <a href="#" class="btn btn-default">Entrar</a>
+                    </div>
+                </div>
+            </div>
+			<div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-compass"></i>Equipamentos</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Cadastrar, atualizar, visualizar ou excluir Equipamentos do patrimonio</p>
+                        <a href="#" class="btn btn-default">Entrar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Script to Activate the Carousel -->
+    <script>
+    $('.carousel').carousel({
+        interval: 5000 //changes the speed
+    })
+    </script>
+
+</body>
+
+</html>

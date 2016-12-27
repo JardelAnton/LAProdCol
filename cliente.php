@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<?
+
+<?php
     require('connect.php');
     //definindo o que vai ser realizado na pagina dos clientes
     $op;
@@ -107,6 +107,7 @@
     }
     
 ?>
+<!DOCTYPE html>
 <html lang="en">
     <head>
 
@@ -137,23 +138,23 @@
         </script>
         <script type="text/javascript">
             function load(){
-                var op = <?echo $op;?>;
-                if(op == 1){
+                var op = <?php echo '"'.$_GET['op'].'"';?>;
+                if( op == "insert"){
                     document.getElementById("insert").style.display="block";
                     document.getElementById("update").style.display="none";
                     document.getElementById("delete").style.display="none";
                     document.getElementById("payreg").style.display="none";
-                }else if(op == 2){
+                }else if(op == "update"){
                     document.getElementById("insert").style.display="none";
                     document.getElementById("update").style.display="block";
                     document.getElementById("delete").style.display="none";
                     document.getElementById("payreg").style.display="none";
-                }else if(op == 3){
+                }else if(op =="delete"){
                     document.getElementById("insert").style.display="none";
                     document.getElementById("update").style.display="none";
                     document.getElementById("delete").style.display="block";
                     document.getElementById("payreg").style.display="none";
-                }else if(op == 4){
+                }else if(op == "payreg"){
                     document.getElementById("insert").style.display="none";
                     document.getElementById("update").style.display="none";
                     document.getElementById("delete").style.display="none";
@@ -246,7 +247,7 @@
                                 <input type="text" name="email" placeholder="Email" required>
                                 <br/>
                                 <input type="text" name="phone" placeholder="Telefone" maxlength="14" OnKeyPress="formatar('##-####-#####', this)" required/>
-                                <input type="submit" name="select" value="register" />
+                                <input type="submit" name="select" value="Registrar" />
                             </form>
                         </div>
                     </div>
@@ -264,24 +265,24 @@
                 <div class="col-md-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <form method="post" action="" id="fregister">
+                            <form method="post" action="cliente.php?op=update" id="fregister">
                               <select name="empresa">
                                 <option>Selecione:</option>
                                 <?
                                     $sql = "SELECT * FROM cliente";
                                     $res = mysqli_query($conexao,$sql);
                                     while($tupla = mysqli_fetch_assoc($res)){
-                                        echo'<option value="'.$tupla['codcli'].'"">'.$tupla['nome'].'</option>';
+                                        echo'<option value='.$tupla['codcli'].'>'.$tupla['nome'].'</option>';
                                     }
                                 ?>
                             </select>
                                 <input type="submit" name="select" value="Selecionar" />
                             </form>
-                            <?
+                            <?php
                             if(isset($_POST['select']) && isset($_POST['empresa'])){
                             echo'
                             <script type="text/javascript">
-                                document.getElementById("fregister").style.display="none";
+                                document.getElementById("fregister").style.display="block";
                             </script>';
                                 $names=$_POST['empresa'];
                                 $sql = "SELECT * FROM cliente c join endereco e WHERE e.identifica=c.codcli and c.codcli = '$names'";
@@ -291,7 +292,7 @@
                                         <form action="" method="post">
                                         <input name="codc" value = "'.$tupla['codcli'].'" size = 1 readonly/><br/> Cpf/cnpj:                                        
                                         ';?>
-                                        <input id="jur1" type="text" name="cnpj" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';
+                                        <input id="jur1" type="text" name="cnpj" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)" value=<?php echo'"'.$tupla['cnpj'].'"/>';
                                         echo '</br/>
                                             Nome:<input type="text" name="nome" value="'.$tupla['nome'].'"><br/>
                                             Endereço:<br/>
@@ -301,13 +302,13 @@
                                             <br/>
                                         
                                         CEP:<input type="text" name="cep" value="'.$tupla['cep'].'" ';?>maxlength="9" OnKeyPress="formatar('#####-###', this)" required>
-                                        <? echo'
+                                        <?php echo'
                                         <br/>
                                         Bairro:<input type="text" name="bairro" value="'.$tupla['bairro'].'" required>
                                         <br/>
                                         Logradouro:<input type="text" name="logradouro" value="'.$tupla['logradouro'].'" required>
                                         <br/>
-                                            <input type="submit" name="update" value="Atualizar">
+                                            <input type="submit" name="update" value="Atualizar"/>
                                         </form>
                                     ';
                               }  
@@ -332,7 +333,7 @@
                        <form method="post" action="" id="delete">
                               <select name="empresa">
                                 <option>Selecione:</option>
-                                <?
+                                <?php
                                     $sql = "SELECT * FROM cliente";
                                     $res = mysqli_query($conexao,$sql);
                                     while($tupla = mysqli_fetch_assoc($res)){
@@ -363,7 +364,7 @@
                        <form method="post" action="" id="payment">
                               <select name="empresa">
                                 <option>Selecione:</option>
-                                <?
+                                <?php 
                                     $sql = "SELECT name FROM cliente";
                                     $res = mysqli_query($conexao,$sql);
                                     while($tupla = mysqli_fetch_assoc($res)){
@@ -373,7 +374,7 @@
                             </select>
                             <input type="submit" name="selecinar" value="selecinar"/>
                         <form>
-                        <?
+                        <?php 
                             if(isset($_POST['selecinar']) && isset($_POST['empresa'])){
                                 echo'
                                 <script type="text/javascript">
@@ -387,10 +388,10 @@
                                         <form action="" method="post">
                                         <input name=codc value = "'.$tupla['codc'].'" size = 1 readonly/><br/> Cpf/cnpj:                                        
                                         ';?>
-                                        <?if(strlen($tupla['cnpj'])==14){?>
-                                        <input id="fis1" type="text" name="cnpj" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';}else{?>
+                                        <?php if(strlen($tupla['cnpj'])==14){?>
+                                        <input id="fis1" type="text" name="cnpj" maxlength="14" OnKeyPress="formatar('###.###.###-##', this)" value=<?php echo'"'.$tupla['cnpj'].'"/>';}else{?>
 
-                                        <input id="jur1" type="text" name="cnpj" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)" value=<? echo'"'.$tupla['cnpj'].'"/>';}
+                                        <input id="jur1" type="text" name="cnpj" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)" value=<?php echo'"'.$tupla['cnpj'].'"/>';}
                                         echo '</br/>
                                             Nome:<input type="text" name="name" value="'.$tupla['name'].'"><br/>
                                             Endereço:<input type="text" name="address" value="'.$tupla['address'].'"><br/>
