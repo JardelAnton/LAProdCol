@@ -1,31 +1,40 @@
 <?php
 
-	$host ='localhost';
-	$Port = 3306;
-	$bd = 'lairton';
-	$user = 'root';
-	$pass = '';
+	session_start(); 
 
-	$conexao = mysqli_connect($host,$user,$pass) or die(mysql_error());
-	mysqli_select_db($conexao,$bd);
+	$dbHostname = "localhost";
+	$dbDatabase = "erpla";
+	$dbUsername = "root";
+	$dbPassword = "";
 
-/*
-    // A simple PHP script demonstrating how to connect to MySQL.
-    // Press the 'Run' button on the top to start the web server,
-    // then click the URL that is emitted to the Output tab of the console.
+	$conexao = mysqli_connect($dbHostname,$dbUsername,$dbPassword,$dbDatabase) or die(mysql_error());
 
-    $servername = getenv('IP');
-    $username = getenv('C9_USER');
-    $password = "";
-    $database = "c9";
-    $dbport = 3306;
 
-    // Create connection
-    $db = new mysqli($servername, $username, $password, $database, $dbport);
 
-    // Check connection
-    if ($db->connect_error) {
-        die("Connection failed: " . $db->connect_error);
-    } 
-    echo "Connected successfully (".$db->host_info.")";*/
+
+
+	function conectadb($dbHostname, $dbUsername, $dbPassword){
+		$con = mysqli_connect($dbHostname, $dbUsername, $dbPassword);
+		if(!$con) {
+			die("Não foi possível conectar ao MySQL: " . mysqli_error($con));
+	 	}
+	 	return $con;
+	}
+
+	function selectdb($con, $db) {
+		mysqli_select_db($con, $db)
+	 		or die("Não foi possível selecionar a base de dados: ".mysqli_error($con));
+	}
+
+	function query($con, $query) {
+
+		$result = mysqli_query($con, $query);
+
+		if (!$result) {
+			die ("Falha de acesso à base: " . mysqli_error($con) . mysqli_errno($con));
+		}
+		return $result;
+	}
+
+
 ?>

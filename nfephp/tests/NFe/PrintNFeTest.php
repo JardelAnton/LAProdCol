@@ -6,13 +6,15 @@
  */
 use NFePHP\NFe\PrintNFe;
 
+require_once 'PHPUnit/Autoload.php';
+
 class PrintNFeTest extends PHPUnit_Framework_TestCase
 {
     public $nfe;
     
     public function testeInstanciar()
     {
-        $configJson = file_get_contents(dirname(dirname(__FILE__)) . '/fixtures/config/fakeconfig.json');
+        $configJson = file_get_contents(dirname(dirname(__FILE__)) . 'nfephp/config/config.json');
         $json = json_decode($configJson);
         $aDocFormat = (array) $json->aDocFormat;
         $this->nfe = new PrintNFe($aDocFormat);

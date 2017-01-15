@@ -1,423 +1,303 @@
-<!DOCTYPE html>
+﻿<?php
+	require ("connect.php");
+	$teste_sql= "SELECT * FROM usuario ";
+	$teste_result = mysqli_query($conexao,$teste_sql);
+	$teste_row_count=mysqli_num_rows($teste_result);
+	if($teste_row_count==0){
+		$_SESSION['first'] = "begin";
+	}
 
-<html lang="en">
+	if(isset($_POST['entrar'])){
+		$usuario = $_POST["user"];
+		$senha = md5($_POST["pass"]);
 
-<head>
+		$sql = "SELECT * FROM usuario WHERE nome = '$usuario' AND senha ='$senha'";
+		$result = mysqli_query($conexao,$sql);
+		$row = mysqli_fetch_array($result);
+		if(mysqli_num_rows($result) == 1){
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+			$_SESSION['name'] = $usuario;
+			$_SESSION['password'] = $_POST['pass'];
+			$_SESSION['funcao'] = $row['funcao'];
+			$_SESSION['local'] = $row['codl'];
+			header("Location: index.php");
+		}else{
+			$_SESSION['newerror'] = "Usuário ou senha não conferem";
+		}
+	}else if(isset($_POST['logout']) || isset($_GET['logout'])){
 
-    <title>Eventos</title>
+		unset($_SESSION['name']);
+		unset($_SESSION['senha']);
+		unset($_SESSION['funcao']);
+		unset($_SESSION['first']);
+		unset($_SESSION['falta']);
+		header("Location: index.php");
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+	}else if(isset($_POST['newpeople'])){
+		if(isset($_POST['newpass1']) && isset($_POST['newpass2'])){
+			$pass1 = $_POST['newpass1'];
+			$pass2 = $_POST['newpass2'];
+			if(isset($_SESSION['first'])){
+				$pass1 = md5($pass2);
+				$nome  = $_POST['newname'];
+				$funcao= $_POST['newfunction'];
+				$placename = $_POST['newplacen'];
 
-    <!-- Custom CSS -->
-    <link href="css/modern-business.css" rel="stylesheet">
+				$sql = "INSERT INTO usuario (nome,funcao,senha) VALUES ('$nome','$funcao','$pass1')";
+				$cons = mysqli_query($conexao ,$sql);
+				if(!$cons){
+					$_SESSION['newerror']="Não foi possivel cadastrar usuário. Erro: ".mysqli_error($conexao);
+				}else{
+					unset($_SESSION['first']);
+					$_SESSION['newerror']="Usuário Cadastrado.";
+					header("Location:index.php");
+				}
+			}else if($pass1==$pass2){
+				if(isset($_SESSION['name'])){
+					$quem = $_SESSION['name'];
+					$qpass = md5($_SESSION['password']);
+					$sql = "SELECT * FROM usuario WHERE nome = '$quem' AND senha ='$qpass'";
+					$result = mysqli_query($conexao,$sql,MYSQLI_USE_RESULT);
+					$row = $result->fetch_assoc();
+					if($row['funcao']=='Administrador'){
+						$pass1 = md5($pass2);
+						$nome  = $_POST['newname'];
+						$funcao= $_POST['newfunction'];
+						$codl  = $_POST['codlocal'];
+						mysqli_free_result($result);
+						mysqli_next_result($conexao);
+						$sql = "INSERT INTO usuario (nome,funcao,senha,codl) VALUES ('$nome','$funcao','$pass1','$codl')";
+						$cons = mysqli_query($conexao ,$sql);
+						if(!$cons)
+							$_SESSION['newerror']="Não foi possivel cadastrar usuário. Erro: ".mysqli_error($conexao);
+						else
+							$_SESSION['newerror']="Usuário Cadastrado.";
+					}else
+						$_SESSION['newerror']="you have no power here";
+				}
+			}else
+				$_SESSION['newerror']="As senhas não conferem.";
+		}else $_SESSION['newrror']="As senhas não conferem";
+	}else if(isset($_GET['fp'])){
+		if(isset($_POST['changepass'])){
+			$email = $_POST['email'];
+			$pass1 = $_POST['pass1'];
+			$pass2 = $_POST['pass2'];
+			if($pass1 == $pass2){
+				$pass1= md5($pass2);
+				$sql = "UPDATE usuario SET senha = '$pass1' WHERE nome = '$email'";
+				$result = mysqli_query($conexao,$sql);
 
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+				if($result){
+					$_SESSION['newerror'] = "Senha Alterada";
+				}
+			}else{
+				$_SESSION['newerror'] = "As senhas não conferem";
+			}
+		}
+	}
+?>
+<html>
+	<head>
+		<title>Index</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<!-- Bloco de script para login-->
+		<script type="text/javascript">
+			function check_login(){
+				/*Se estiver logado não há necessidade de pedir login, mas oferecer opção de logout*/
+				if(<?php if(isset($_SESSION['name'])) echo '1';else echo '0';?>){
+					document.getElementById('lin').style.display='none';
+					document.getElementById('fp').style.display='none';
+					document.getElementById("cad_user").style.display='none';
+					document.getElementById("alarmes").style.display='block';
+				}else if(<?php if(!isset($_SESSION['first']))echo'1';else echo "0";?>){
+					document.getElementById('lin').style.display='block';
+					document.getElementById('fp').style.display='none';
+					document.getElementById("cad_user").style.display="none";
+					document.getElementById("alarmes").style.display='none';
+				}else{//no caso de primeiro uso, permitir o admin se cadastrar sem problemas
+					document.getElementById('lin').style.display='none';
+					document.getElementById('fp').style.display='none';
+					document.getElementById("cad_user").style.display="none";
+					document.getElementById("alarmes").style.display='none';
+				}
+				if(<?php if(isset($_GET['fp']))echo'1'; else echo'0';?>){//esqueceu a senha: desenvolver metodo de recuperação
+					document.getElementById('lin').style.display='none';
+					document.getElementById('fp').style.display='block';
+					document.getElementById("cad_user").style.display="none";
+					document.getElementById("alarmes").style.display='none';
+				}if(<?php if(isset($_GET['cad_user']))echo'1'; else echo'0';?>){
+					document.getElementById('lin').style.display='none';
+					document.getElementById('fp').style.display='none';
+					document.getElementById("cad_user").style.display='block';
+					document.getElementById("alarmes").style.display='none';
+				}
+			}
+			function cad_user() {
+				document.getElementById("cad_user").style.display="block";
+			}
+		</script>
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
-    </script>
-    <script type="text/javascript">
-    	function Clientes(){
-    		document.getElementById("Clientes").style.display="block";
-    		document.getElementById("Funcionarios").style.display="none";
-    		document.getElementById("Estoque").style.display="none";
-    		document.getElementById("Venda").style.display="none";
-    		document.getElementById("Compra").style.display="none";
-    		document.getElementById("Gerencia").style.display="none";
-    	}
-    	function Funcionarios(){
-    		document.getElementById("Funcionarios").style.display="block";
-    		document.getElementById("Estoque").style.display="none";
-    		document.getElementById("Clientes").style.display="none";
-    		document.getElementById("Venda").style.display="none";
-    		document.getElementById("Compra").style.display="none";
-    		document.getElementById("Gerencia").style.display="none";
-    	}
-    	function Estoque(){
-    		document.getElementById("Estoque").style.display="block";
-    		document.getElementById("Funcionarios").style.display="none";
-    		document.getElementById("Clientes").style.display="none";
-    		document.getElementById("Venda").style.display="none";
-    		document.getElementById("Compra").style.display="none";
-    		document.getElementById("Gerencia").style.display="none";
-    	}
-    	function Venda(){
-    	    document.getElementById("Venda").style.display="block";
-    	    document.getElementById("Estoque").style.display="none";
-    		document.getElementById("Funcionarios").style.display="none";
-    		document.getElementById("Clientes").style.display="none";
-    		document.getElementById("Compra").style.display="none";
-    		document.getElementById("Gerencia").style.display="none";
-    	}
-    	function Compra(){
-    	    document.getElementById("Venda").style.display="none";
-    	    document.getElementById("Estoque").style.display="none";
-    		document.getElementById("Funcionarios").style.display="none";
-    		document.getElementById("Clientes").style.display="none";
-    		document.getElementById("Compra").style.display="block";
-    		document.getElementById("Gerencia").style.display="none";
-    	}
-    	function Gerencia(){
-    	    document.getElementById("Venda").style.display="none";
-    	    document.getElementById("Estoque").style.display="none";
-    		document.getElementById("Funcionarios").style.display="none";
-    		document.getElementById("Clientes").style.display="none";
-    		document.getElementById("Compra").style.display="none";
-    		document.getElementById("Gerencia").style.display="block";
-    	}
-    </script>    
-</head>
+	</head>
+	<body onload="check_login();"> <!-- A função também deverá definir em que #section da página está -->
 
-<body>
+		<div class="container">
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.php">L.A Produtos Coloniais</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-        </div>
-        <!-- /.container -->
-    </nav>
+			<!-- section login BEGIN-->
+			<section>
 
-	<!-- Page Content -->    
-    <button class="navbar-brand" onClick="Clientes();">Clientes</button>
-    <button class="navbar-brand" onClick="Funcionarios();">Funcionarios</button>
-    <button class="navbar-brand" onClick="Estoque();">Estoque</button>
-    <button class="navbar-brand" onClick="Venda();">Venda</button>
-    <button class="navbar-brand" onClick="Compra();">Compra</button>
-    <button class="navbar-brand" onClick="Gerencia();">Gerencia</button>
+				<?php require_once ("menu-principal.php"); ?>
 
+				<div id="lin" class="col-sm-12" align="center">
+					<form action="index.php" method="post" class="form-horizontal">
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="text" name="user" class="form-control" required="required"
+								<?php
+									if(isset($usuario))
+										echo 'value="' . $usuario . '"';
+									else
+										echo 'placeholder="Login"'; ?>>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="password" name="pass" class="form-control" required="required"
+								<?php
+									if(isset($_POST['pass']))
+										echo 'value="' . $_POST['pass'] . '"';
+									else
+										echo 'placeholder="Senha"'; ?>>
+							</div>
+						</div>
+						<input type="submit" name="entrar" value="Login" class="btn btn-primary">
+					</form>
+					<a href='index.php?fp=1'>Esqueci Minha Senha</a>
+				</div>
 
-    <!-- Page Content -->
-    <div class="container" id="Clientes" style="display:none">
+				<div id="fp" class="col-sm-12" align="center">
+					<form action="index.php?fp=1" method="post" class="form-horizontal">
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="text" name="email" class="form-control" required="required" placeholder="Usuário">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="password" name="pass1" class="form-control" required="required" placeholder="Nova Senha">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="password" name="pass2" class="form-control" required="required" placeholder="Confirme Senha">
+							</div>
+						</div>
+						<input type="submit" name="changepass" value="Salvar" class="btn btn-primary">
+					</form>
+				</div>
 
-        <!-- Marketing Icons Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Clientes</h1>
-            </div>  
-            <div class="col-md-3"><a href="cliente.php?op=payreg">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Registrar Pagamento</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Adicionar pagamento efetuado por cliente</p>
-                    </div>
-                </div>
-                </a>
-            </div>          
-            <div class="col-md-3"><a href="cliente.php?op=insert">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Cadastrar</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p><br/>Cadastrar novos clientes</p>
-                    </div>
-                </div>
-                </a>
-            </div>
-			<div class="col-md-3"><a href="cliente.php?op=update">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Atualizar</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p><br/>Atualizar clientes ja existentes</p>
-                    </div>
-                </div>
-                </a>
-            </div>
-            <div class="col-md-3"><a href="cliente.php?op=delete">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Excluir</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p><br/>Excluir cliente</p>
-                    </div>
-                </div>
-            </div></a>
-        </div>
-        <!-- /.row -->
-    </div>
-    <!-- /.container -->
+				<!-- a div seguinte é somente exibida no caso de o usuário logado ser um administrador -->
+				<div class="col-sm-12" align="center" id="cad_user_f" style='
+				<?php
+					if(isset($_SESSION['first']))
+						echo 'display:block;';
+					else echo 'display:none;'; ?>'>
+					<h3><b>Cadastrar Novo Usuário</b></h3>
+					<form action="index.php" method="post" class="form-horizontal">
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="text" name="newname" class="form-control" required="required" placeholder="Usuário">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="password" name="newpass1" class="form-control" required="required" placeholder="Nova Senha">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="password" name="newpass2" class="form-control" required="required" placeholder="Confirme Senha">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="text" name="newfunction" class="form-control" required="required" value="Administrador" readonly>
+							</div>
+						</div>
+						<input type="submit" name="newpeople" value="Salvar" class="btn btn-primary">
+					</form>
+				</div>
 
+				<!-- a div seguinte é somente exibida no caso de o usuário logado ser um administrador -->
+				<div class="col-sm-12" align="center" id="cad_user" style="display:none;">
+					<h3><b>Cadastrar Novo Usuário</b></h3>
+					<form action="index.php" method="post" class="form-horizontal">
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="text" name="newname" class="form-control" required="required" placeholder="Usuário">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="password" name="newpass1" class="form-control" required="required" placeholder="Nova Senha">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-2 col-xs-offset-5">
+								<input type="password" name="newpass2" class="form-control" required="required" placeholder="Confirme Senha">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-xs-2 col-xs-offset-5">
+						    <label for="func">Função:</label>
+						    <select class="form-control" id="func" name="newfunction">
+						    	<option value="Administrador">Administrador</option>
+								<option value="Servidor">Servidor</option>
+								<option value="Estagiário">Estagiário</option>									
+						    </select>
+							</div>
+					  </div>
+						<input type="submit" name="newpeople" value="Salvar" class="btn btn-primary">
+					</form>
+				</div>
+			</section>
 
-     <!-- Page Content -->
-    <div class="container" id="Funcionarios" style="display:none">
+			<div id="alarmes">
+				<?php
+				//percorrer todos os produtos e verificar se hÃ¡ algum com qtd menor ou igual a qtdmin.
+					if(isset($_SESSION['name'])){
+						$sql = "SELECT * FROM localizacao JOIN produto ON codp = cod WHERE qtd<=qtdmin AND alarm=1";
+						$res = mysqli_query($conexao, $sql);
+						$count=0;
+						echo '<div align="center"><h1>Alarmes</h1></div>';
+						if($res) {
+							while ($resu = mysqli_fetch_assoc($res)){
+								$count++;
+								echo '<span class="label label-danger">Atenção</span>';
+								echo '<div class="alert alert-danger">
+												O produto <b>' . $resu['nome'] . '</b> conta com <b>' . $resu['qtd'] .
+												'</b> unidades, a quantidade mínima é de <b>' . $resu['qtdmin'] . '</b> unidades.
+											</div>';
+							}
+						}
+						if($count!=0) $_SESSION['falta'] = $count;
+						else unset($_SESSION['falta']);
+					}
+				?>
+			</div>
+			<?php
+				if(isset($_SESSION['newerror'])) {
+					echo $_SESSION['newerror'];
+					unset($_SESSION['newerror']);
+				}
+			?>
+		</div>
 
-        <!-- Marketing Icons Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Funcionarios</h1>
-            </div>  
-            <div class="col-md-3" ><a href="funcionario.php?op=payreg">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Registrar Pagamento</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Adicionar pagamento efetuado por cliente</p>
-                    </div>
-                </div>
-            </div></a>      
-            <div class="col-md-3"><a href="funcionario.php?op=insert">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Cadastrar</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Cadastrar novos funcionarios</p>
-                    </div>
-                </div>
-            </div></a>
-			<div class="col-md-3"><a href="funcionario.php?op=update">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Atualizar</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Atualizar funcionario ja existentes</p>
-                    </div>
-                </div>
-            </div></a>
-            <div class="col-md-3"><a href="funcionario.php?op=delete">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Excluir</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Excluir funcionario</p>
-                    </div>
-                </div>
-            </div></a>
-        </div>
-        <!-- /.row -->
-    </div>
-    <!-- /.container -->
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="js/bootstrap.min.js"></script>
 
-
-     <!-- Page Content -->
-    <div class="container" id="Estoque" style="display:none">
-
-        <!-- Marketing Icons Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Estoque</h1>
-            </div>  
-            <div class="col-md-3"><a href="estoque.php?op=entrega">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Registrar Entrega</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Adicionar entrega a cliente</p>
-                        <button onClick="delete_cli();">Registrar</button>
-                    </div>
-                </div>
-            </div></a>
-            <div class="col-md-3"><a href="estoque.php?op=deposito">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Registrar Deposito</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Adicionar deposito no containers</p>
-                        <button onClick="insert_cli();">Registrar</button>
-                    </div>
-                </div>
-            </div></a>
-        </div>
-        <!-- /.row -->
-    </div>
-    <!-- /.container -->
-
- <!-- Page Content -->
-    <div class="container" id="Compra" style="display:none">
-
-        <!-- Marketing Icons Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Compra</h1>
-            </div>  
-            <div class="col-md-3">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Registrar Compra</h4>
-                    </div>
-                    <div class="panel-body">
-                        <form action ="index.php?op=compra" method="POST">
-                            Vendedor:<br /><select name ="codcli">
-                                <option>Selecione</option>
-                            </select><br />
-                            Faturas:<input type="numeric" value="10" name="fatura" size="4"/>
-                            <br />
-                            Impostos:<input type="numeric" value="10" name="imposto" size="4"/>
-                            <br /><br />
-                             Transporte:<select name ="codtra">
-                                <option>Selecione</option>
-                            </select>
-                            <br />
-                            Produto:<select name ="codpro">
-                                <option>Selecione</option>
-                            </select>
-                            <br />
-                            Quantidade:<input type="numeric" value="10" name="numpro" size="4"/>
-                            <br /><br />
-                            Dados Adicionais:<input type="text" value="10" name="dadadc" />
-                           
-                            
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /.row -->
-    </div>
-    <!-- /.container -->
-
-
- <!-- Page Content -->
-    <div class="container" id="Venda" style="display:none">
-
-        <!-- Marketing Icons Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Registrar Venda</h1>
-            </div>  
-            <div class="col-md-3">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Nova venda</h4>
-                    </div>
-                    <div class="panel-body">
-                        <form action ="index.php?op=venda" method="POST">
-                            Destinatário/remetente:<br /><select name ="codcli">
-                                <option>Selecione</option>
-                            </select><br />
-                            Faturas:<input type="numeric" value="10" name="fatura" size="4"/>
-                            <br />
-                            Impostos:<input type="numeric" value="10" name="imposto" size="4"/>
-                            <br /><br />
-                             Transporte:<select name ="codtra">
-                                <option>Selecione</option>
-                            </select>
-                            <br />
-                            Produto:<select name ="codpro">
-                                <option>Selecione</option>
-                            </select>
-                            <br />
-                            Quantidade:<input type="numeric" value="10" name="numpro" size="4"/>
-                            <br /><br />
-                            Dados Adicionais:<input type="text" value="10" name="dadadc" />
-                           
-                            
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /.row -->
-    </div>
-    <!-- /.container -->
-    
-    
-    
-  <!-- Page Content -->
-    <div class="container" id="Gerencia" style="display:none">
-
-        <!-- Marketing Icons Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Gerencia</h1>
-            </div>  
-            <div class="col-md-3"><a href="estoque.php?op=entrega">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Entradas</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Relatório de cargas de entrada</p>
-                        <button onClick="delete_cli();">Registrar</button>
-                    </div>
-                </div>
-            </div></a>
-            <div class="col-md-3"><a href="estoque.php?op=deposito">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Saídas</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Relatório de entregas</p>
-                        <button onClick="insert_cli();">Registrar</button>
-                    </div>
-                </div>
-            </div></a>
-            <div class="col-md-3"><a href="estoque.php?op=deposito">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Falta entregar</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Notas de vendas, mas que produtos não foram retiradas</p>
-                        <button onClick="insert_cli();">Registrar</button>
-                    </div>
-                </div>
-            </div></a>
-            <div class="col-md-3"><a href="estoque.php?op=deposito">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i>Faturamento não recebido</h4>
-                    </div>
-                    <div class="panel-body">
-                        <p>Notas de vendas, mas que boletos/faturas não foram pagas</p>
-                        <button onClick="insert_cli();">Registrar</button>
-                    </div>
-                </div>
-            </div></a>
-        </div>
-        <!-- /.row -->
-    </div>
-    <!-- /.container -->
-
-    
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Script to Activate the Carousel -->
-    <script>
-    $('.carousel').carousel({
-        interval: 5000 //changes the speed
-    })
-    </script>
-
-</body>
-
+	</body>
 </html>

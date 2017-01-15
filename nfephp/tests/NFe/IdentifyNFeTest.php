@@ -5,6 +5,7 @@
  * @author Roberto L. Machado <linux.rlm at gmail dot com>
  */
 use NFePHP\NFe\IdentifyNFe;
+require_once 'PHPUnit/Autoload.php';
 
 class IdentifyNFeTest extends PHPUnit_Framework_TestCase
 {
